@@ -12,23 +12,16 @@
 #include <LiquidCrystal_I2C.h>
 
 int aforo = 0; //contador
-float temperatura = 0; // variable para almacenar la temperatura 
 int s_ingreso = 2; //sensor de entrada
 int s_salida = 3; //sensor de salida
-int buzzer = 12; //buzzer
 int tiempo = 1000; //tiempo de retardo para la variación de aforo
 bool aux_ingreso = false;
 bool aux_salida = false;
-
-
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
-  pinMode(buzzer, OUTPUT);
-  digitalWrite(buzzer, LOW);
-  
   pinMode(s_ingreso, INPUT_PULLUP);
   pinMode(s_salida, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(s_ingreso),ingreso,FALLING);
@@ -44,7 +37,6 @@ void setup() {
 }
 
 void loop() {
-  temperatura = mlx.readObjectTempC();
   imprimir();
   
   if (aux_ingreso==true){
@@ -72,33 +64,12 @@ void salida () {
 
 void imprimir (){
   lcd.clear();
-
+  lcd.setCursor(0,0);
+  lcd.print("Aforo: ");
+  lcd.print(aforo);
   Serial.println(aforo);
-  
-  if (temperatura>38) {
-    lcd.setCursor(0,0);
-    lcd.print("Paso Restringido");
-    //lcd.print(aforo);
-    
-    lcd.setCursor(0,1);
-    lcd.print("Temperatura Alta");
-    digitalWrite(buzzer, HIGH);
-    delay(3000);
-    digitalWrite(buzzer, LOW);
-    
-  } else if(temperatura>32) {
-    lcd.setCursor(0,0);
-    lcd.print(" Bien Venido!!");
-    //cd.print(aforo);
-    lcd.setCursor(0,1);
-    lcd.print("Temp: ");
-    lcd.print(temperatura);
-  } else {
-    lcd.setCursor(0,0);
-    lcd.print("Aforo: ");
-    lcd.print(aforo);
-    lcd.setCursor(0,1);
-    lcd.print("Temp: ----");
-  };
+  lcd.setCursor(0,1);
+  lcd.print("Temp: ");
+  lcd.print(mlx.readObjectTempC());
   Serial.println(mlx.readObjectTempC());
 }
