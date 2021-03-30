@@ -44,6 +44,9 @@ void setup() {
 }
 
 void loop() {
+  if (Serial.available() > 0){
+     aforo = (Serial.read()- '0')*10;  
+  }
   temperatura = mlx.readObjectTempC();
   imprimir();
   
@@ -75,7 +78,7 @@ void imprimir (){
 
   Serial.println(aforo);
   
-  if (temperatura>38) {
+  if (temperatura>39) {
     lcd.setCursor(0,0);
     lcd.print("Paso Restringido");
     //lcd.print(aforo);
@@ -86,13 +89,22 @@ void imprimir (){
     delay(3000);
     digitalWrite(buzzer, LOW);
     
-  } else if(temperatura>32) {
-    lcd.setCursor(0,0);
-    lcd.print(" Bien Venido!!");
-    //cd.print(aforo);
-    lcd.setCursor(0,1);
-    lcd.print("Temp: ");
-    lcd.print(temperatura);
+  } else if(temperatura>29) {
+    if (temperatura>35) {
+      lcd.setCursor(0,0);
+      lcd.print("  Bien Venido!!");
+      //cd.print(aforo);
+      lcd.setCursor(0,1);
+      lcd.print("Temp: ");
+      lcd.print(temperatura);
+    } else {
+      lcd.setCursor(0,0);
+      lcd.print("Intente de nuevo");
+      //cd.print(aforo);
+      lcd.setCursor(0,1);
+      lcd.print("Temp: ");
+      lcd.print(temperatura);
+    }
   } else {
     lcd.setCursor(0,0);
     lcd.print("Aforo: ");
